@@ -1,0 +1,18 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+      config:
+        file-extension: yaml
+        namespace: 1ce6c2fb-611e-4d1e-834d-567340760462
+        shared-configs[0]:
+          dataId: db.yaml
+          refresh: true
+        shared-configs[1]:
+          dataId: sentinel-dev.yaml
+          refresh: true
+  profiles:
+    active: dev
+  application:
+    name: huaapi-interface

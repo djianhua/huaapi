@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.niuma.huaapiinterface.mapper.PoemWordsMapper">
+
+    <resultMap id="BaseResultMap" type="com.niuma.huaapiinterface.model.entity.PoemWords">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="poemWord" column="poemWord" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,poemWord
+    </sql>
+    <select id="getRandomPoemWords" resultType="java.lang.String">
+        select poemWord
+        from poem_words
+        ORDER BY RAND() LIMIT 1;
+    </select>
+</mapper>
