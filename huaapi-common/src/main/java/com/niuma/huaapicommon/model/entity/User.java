@@ -51,9 +51,13 @@ public class User implements Serializable {
      */
     private String userPassword;
     /**
-     * 密码
+     * 手机号码
      */
     private String phoneNum;
+    /**
+     * 邮箱号码
+     */
+    private String emailNum;
     /**
      * accessKey
      */

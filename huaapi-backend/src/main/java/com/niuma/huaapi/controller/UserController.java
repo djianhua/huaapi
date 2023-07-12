@@ -75,7 +75,20 @@ public class UserController {
      */
     @GetMapping("/smsCaptcha")
     public BaseResponse<String> smsCaptcha(@RequestParam String phoneNum) {
-        userService.sendSmsCaptcha(phoneNum);
+        return ResultUtils.error(ErrorCode.NOT_FOUND_ERROR, "该功能暂时关闭，敬请期待！");
+//        userService.sendSmsCaptcha(phoneNum);
+//        return ResultUtils.success("获取短信验证码成功！");
+    }
+
+    /**
+     * 发送短信验证码(通过QQ邮箱)
+     *
+     * @param emailNum
+     * @return
+     */
+    @GetMapping("/smsCaptchaByEmail")
+    public BaseResponse<String> smsCaptchaByEmail(@RequestParam String emailNum) {
+        userService.sendSmsCaptchaByEmail(emailNum);
         return ResultUtils.success("获取短信验证码成功！");
     }
 
@@ -118,6 +131,27 @@ public class UserController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         User user = userService.userLoginBySms(phoneNum, phoneCaptcha, request, response);
+        return ResultUtils.success(user);
+    }
+
+    /**
+     * 用户登录(通过邮箱)
+     *
+     * @param userLoginRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/loginByEmail")
+    public BaseResponse<User> userLoginByEmail(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request, HttpServletResponse response) {
+        if (userLoginRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        String emailNum = userLoginRequest.getEmailNum();
+        String phoneCaptcha = userLoginRequest.getPhoneCaptcha();
+        if (StringUtils.isAnyBlank(emailNum, phoneCaptcha)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User user = userService.userLoginByEmail(emailNum, phoneCaptcha, request, response);
         return ResultUtils.success(user);
     }
 

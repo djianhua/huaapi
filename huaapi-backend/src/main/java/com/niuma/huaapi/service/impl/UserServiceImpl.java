@@ -26,9 +26,11 @@ import com.niuma.huaapi.service.UserService;
 import com.niuma.huaapi.utils.SmsUtils;
 import com.niuma.huaapicommon.common.ErrorCode;
 import com.niuma.huaapicommon.exception.BusinessException;
+import com.niuma.huaapicommon.model.dto.EmailDTO;
 import com.niuma.huaapicommon.model.dto.SmsDTO;
 import com.niuma.huaapicommon.model.entity.User;
 import com.niuma.huaapicommon.model.vo.UserVO;
+import com.niuma.huaapicommon.utils.AuthEmailNumberUtil;
 import com.niuma.huaapicommon.utils.AuthPhoneNumberUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -204,6 +206,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
+    public User userLoginByEmail(String emailNum, String phoneCaptcha, HttpServletRequest request,HttpServletResponse response) {
+        boolean verifyCode = smsUtils.verifyCode(emailNum, phoneCaptcha);
+        if(!verifyCode){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"邮箱验证码错误！");
+        }
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("emailNum",emailNum);
+        User user = this.getOne(queryWrapper);
+        if(user == null){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"用户不存在！");
+        }
+        User safetyUser = this.initLoginUser(user,response);
+        request.getSession().setAttribute(UserConstant.USER_LOGIN_STATE, safetyUser);
+        return safetyUser;
+    }
+
+    @Override
     public User initLoginUser(User originUser,HttpServletResponse response) {
         if (originUser == null) {
             return null;
@@ -312,7 +331,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Override
     public Boolean sendSmsCaptcha(String phoneNum) {
-
+        String email = "3311646194@qq.com";
         if (StringUtils.isEmpty(phoneNum)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "手机号不能为空");
         }
@@ -326,9 +345,26 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
         //生成随机验证码
         int code = (int) ((Math.random() * 9 + 1) * 10000);
-        SmsDTO smsDTO = new SmsDTO(phoneNum,String.valueOf(code));
+        SmsDTO smsDTO = new SmsDTO(phoneNum, String.valueOf(code));
 
         return smsUtils.sendSms(smsDTO);
+    }
+
+    @Override
+    public Boolean sendSmsCaptchaByEmail(String emailNum) {
+        if (StringUtils.isEmpty(emailNum)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "邮箱不能为空");
+        }
+        // 邮箱格式校验
+        AuthEmailNumberUtil authEmailNumberUtil = new AuthEmailNumberUtil();
+        boolean checkEmailNum = authEmailNumberUtil.isEmailNum(emailNum);
+        if (!checkEmailNum) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "邮箱格式错误");
+        }
+        //生成随机验证码
+        int code = (int) ((Math.random() * 9 + 1) * 10000);
+        EmailDTO emailDTO = new EmailDTO(emailNum, String.valueOf(code));
+        return smsUtils.sendSmsByEmail(emailDTO);
     }
 
     @Override

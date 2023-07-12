@@ -1,6 +1,8 @@
 spring:
   application:
     name: huaapi-gateway
+  profiles:
+    active: dev
   cloud:
     nacos:
       discovery:
@@ -11,5 +13,3 @@ spring:
         shared-configs[0]:
           dataId: dubbo.yaml
           refresh: true
-  profiles:
-    active: dev

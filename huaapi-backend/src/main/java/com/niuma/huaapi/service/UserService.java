@@ -45,6 +45,15 @@ public interface UserService extends IService<User> {
     User userLoginBySms(String phoneNum, String phoneCaptcha, HttpServletRequest request,HttpServletResponse response);
 
     /**
+     * 使用邮箱登录
+     * @param emailNum
+     * @param phoneCaptcha
+     * @param request
+     * @return
+     */
+    User userLoginByEmail(String emailNum, String phoneCaptcha, HttpServletRequest request,HttpServletResponse response);
+
+    /**
      * 获取一个脱敏的用户信息
      *
      * @param originUser
@@ -96,6 +105,8 @@ public interface UserService extends IService<User> {
      * @return
      */
     Boolean sendSmsCaptcha(String phoneNum);
+
+    Boolean sendSmsCaptchaByEmail(String emailNum);
 
     /**
      * 重新生成ak，sk

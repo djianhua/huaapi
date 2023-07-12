@@ -2,6 +2,7 @@ package com.niuma.huaapi.utils;
 
 import com.niuma.huaapi.common.RedisTokenBucket;
 import com.niuma.huaapicommon.constant.RedisConstant;
+import com.niuma.huaapicommon.model.dto.EmailDTO;
 import com.niuma.huaapicommon.model.dto.SmsDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -41,6 +42,25 @@ public class SmsUtils {
 
         // 利用消息队列，异步发送短信
         rabbitMqUtils.sendSmsAsync(smsDTO);
+        return true;
+    }
+
+    public boolean sendSmsByEmail(EmailDTO emailDTO) {
+        // 从令牌桶中取得令牌，未取得不允许发送短信
+        boolean acquire = redisTokenBucket.tryAcquire(emailDTO.getEmailNum());
+        if (!acquire) {
+            log.info("emailNum：{}，send SMS frequent", emailDTO.getEmailNum());
+            return false;
+        }
+        log.info("发送邮件：{}",emailDTO);
+        String emailNum = emailDTO.getEmailNum();
+        String code = emailDTO.getCode();
+
+        // 将手机号对应的验证码存入Redis，方便后续检验
+        redisTemplate.opsForValue().set(RedisConstant.SMS_CODE_PREFIX + emailNum, String.valueOf(code), 5, TimeUnit.MINUTES);
+
+        // 利用消息队列，异步发送短信
+        rabbitMqUtils.sendSmsByEmailAsync(emailDTO);
         return true;
     }
 

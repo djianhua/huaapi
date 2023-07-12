@@ -2,6 +2,7 @@ package com.niuma.huaapi.utils;
 
 import com.niuma.huaapicommon.constant.RabbitMqConstant;
 import com.niuma.huaapicommon.constant.RedisConstant;
+import com.niuma.huaapicommon.model.dto.EmailDTO;
 import com.niuma.huaapicommon.model.dto.SmsDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.MessageProperties;
@@ -37,6 +38,8 @@ public class SmsRabbitMqUtils implements RabbitTemplate.ConfirmCallback, RabbitT
     private String finalId = null;
 
     private SmsDTO smsDTO = null;
+
+    private EmailDTO emailDTO = null;
 
     /**
      * 向mq中投递发送短信消息
@@ -74,6 +77,40 @@ public class SmsRabbitMqUtils implements RabbitTemplate.ConfirmCallback, RabbitT
             //出现异常，删除该短信id对应的redis，并将该失败消息存入到“死信”redis中去，然后使用定时任务去扫描该key，并重新发送到mq中去
             redisTemplate.delete(RedisConstant.SMS_MESSAGE_PREFIX + messageId);
             redisTemplate.opsForHash().put(RedisConstant.MQ_PRODUCER, messageId, smsDTO);
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void sendSmsByEmailAsync(EmailDTO emailDTO) {
+        String messageId = null;
+        try {
+            // 将 headers 添加到 MessageProperties 中，并发送消息
+            messageId = UUID.randomUUID().toString();
+            HashMap<String, Object> messageArgs = new HashMap<>();
+            messageArgs.put("retryCount", 0);
+            //消息状态：0-未投递、1-已投递
+            messageArgs.put("status", 0);
+            messageArgs.put("smsTo", emailDTO);
+            //将重试次数和短信发送状态存入redis中去,并设置过期时间
+            redisTemplate.opsForHash().putAll(RedisConstant.SMS_MESSAGE_PREFIX + messageId, messageArgs);
+            redisTemplate.expire(RedisConstant.SMS_MESSAGE_PREFIX + messageId, 10, TimeUnit.MINUTES);
+
+            String finalMessageId = messageId;
+            finalId = messageId;
+            this.emailDTO = emailDTO;
+            // 将消息投递到MQ，并设置消息的一些参数
+            rabbitTemplate.convertAndSend(RabbitMqConstant.SMS_EXCHANGE_NAME, RabbitMqConstant.SMS_EXCHANGE_ROUTING_KEY, emailDTO, message -> {
+                MessageProperties messageProperties = message.getMessageProperties();
+                //生成全局唯一id
+                messageProperties.setMessageId(finalMessageId);
+                messageProperties.setContentEncoding("utf-8");
+                return message;
+            });
+
+        } catch (Exception e) {
+            //出现异常，删除该短信id对应的redis，并将该失败消息存入到“死信”redis中去，然后使用定时任务去扫描该key，并重新发送到mq中去
+            redisTemplate.delete(RedisConstant.SMS_MESSAGE_PREFIX + messageId);
+            redisTemplate.opsForHash().put(RedisConstant.MQ_PRODUCER, messageId, emailDTO);
             throw new RuntimeException(e);
         }
     }
