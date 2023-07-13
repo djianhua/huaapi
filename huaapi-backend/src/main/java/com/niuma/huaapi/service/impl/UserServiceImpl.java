@@ -76,7 +76,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     /**
      * 盐值，混淆密码
      */
-    private static final String SALT = "dogbin";
+    private static final String SALT = "doghua";
 
     /**
      * 图片验证码 redis 前缀
@@ -90,10 +90,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         String userAccount = userRegisterRequest.getUserAccount();
         String checkPassword = userRegisterRequest.getCheckPassword();
         String captcha = userRegisterRequest.getCaptcha();
-        String phoneNum = userRegisterRequest.getPhoneNum();
+        // 改为邮箱注册
+//        String phoneNum = userRegisterRequest.getPhoneNum();
+        String emailNum = userRegisterRequest.getEmailNum();
+
         String phoneCaptcha = userRegisterRequest.getPhoneCaptcha();
         // 1. 校验
-        if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword, captcha,phoneNum,phoneCaptcha,userName)) {
+        if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword, captcha, emailNum, phoneCaptcha, userName)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
         }
         if(userName.length()>USERNAME_LENGTH){
@@ -109,9 +112,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (!userPassword.equals(checkPassword)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "两次输入的密码不一致");
         }
-        AuthPhoneNumberUtil authPhoneNumberUtil = new AuthPhoneNumberUtil();
-        if (!authPhoneNumberUtil.isPhoneNum(phoneNum)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "手机验证码错误");
+//        AuthPhoneNumberUtil authPhoneNumberUtil = new AuthPhoneNumberUtil();
+//        if (!authPhoneNumberUtil.isPhoneNum(phoneNum)) {
+//            throw new BusinessException(ErrorCode.PARAMS_ERROR, "手机验证码错误");
+//        }
+        // 校验邮箱格式（手机号格式）是否正确
+        AuthEmailNumberUtil authEmailNumberUtil = new AuthEmailNumberUtil();
+        if (!authEmailNumberUtil.isEmailNum(emailNum)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "邮箱格式不正确");
         }
         //图形验证码
         String signature = request.getHeader("signature");
@@ -122,9 +130,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (StringUtils.isEmpty(checkCaptcha) || !captcha.equals(checkCaptcha)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "图片验证码过期或错误！");
         }
-
-        if(!smsUtils.verifyCode(phoneNum, phoneCaptcha)){
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "手机验证码过期或错误！");
+        // 邮箱/手机验证码
+        if(!smsUtils.verifyCode(emailNum, phoneCaptcha)){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "邮箱验证码过期或错误！");
         }
 
         synchronized (userAccount.intern()) {
@@ -148,7 +156,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             user.setUserPassword(encryptPassword);
             user.setAccessKey(accessKey);
             user.setSecretKey(secretKey);
-            user.setPhoneNum(phoneNum);
+            user.setEmailNum(emailNum);
             boolean saveResult = this.save(user);
             if (!saveResult) {
                 throw new BusinessException(ErrorCode.SYSTEM_ERROR, "注册失败，数据库错误");

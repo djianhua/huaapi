@@ -39,7 +39,8 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
     private static final List<String> IP_WHITE_LIST = Arrays.asList("127.0.0.1");
     public static final List<String> NOT_LOGIN_PATH = Arrays.asList(
             "/api/user/login", "/api/user/loginBySms", "/api/user/register", "/api/user/smsCaptcha",
-            "/api/user/getCaptcha", "/api/interface/**","/api/third/alipay/**","/api/interfaceInfo/sdk"
+            "/api/user/getCaptcha", "/api/interface/**","/api/third/alipay/**","/api/interfaceInfo/sdk",
+            "/api/user/smsCaptchaByEmail", "/api/user/loginByEmail"
     );
     @DubboReference
     InnerUserService innerUserService;

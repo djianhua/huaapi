@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
  * @author niuma
  */
 @RestController
-
 @RequestMapping("/user")
 public class UserController {
 

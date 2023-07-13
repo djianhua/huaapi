@@ -22,7 +22,9 @@ public class UserRegisterRequest implements Serializable {
 
     private String checkPassword;
 
-    private String phoneNum;
+//    private String phoneNum;
+    // 手机短信注册改为邮箱邮件注册
+    private String emailNum;
 
     private String phoneCaptcha;
 
