@@ -2,7 +2,7 @@
 
 > 一个丰富的API开放调用平台，为开发者提供便捷、实用的API调用体验
 >
-> Java + React 全栈项目，包括网站前台+管理员后台，感谢[鱼厂创始人](https://github.com/liyupi)提供的项目基础框架，我也是在此基础上作拓展
+> Java + React 全栈项目，包括网站前台+管理员后台，在原来[API开发平台](https://github.com/jianhuadeng/Huaapi-backend-main)基础上进行功能拓展。
 >
 > 项目后端开源代码：https://github.com/jianhuadeng/huaapi
 >

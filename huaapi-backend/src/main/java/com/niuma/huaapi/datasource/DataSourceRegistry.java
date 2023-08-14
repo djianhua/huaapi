@@ -21,6 +21,7 @@ public class DataSourceRegistry {
     @Resource
     private Apiaa1DataSource apiaa1DataSource;
 
+
     Map<String, InterfaceInfoDataSource> typeDataSourceMap;
 
     public InterfaceInfoDataSource getDataSourceByType(String type) {

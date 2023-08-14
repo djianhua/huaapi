@@ -87,8 +87,11 @@ public class UserController {
      */
     @GetMapping("/smsCaptchaByEmail")
     public BaseResponse<String> smsCaptchaByEmail(@RequestParam String emailNum) {
-        userService.sendSmsCaptchaByEmail(emailNum);
-        return ResultUtils.success("获取短信验证码成功！");
+        Boolean isSuccess = userService.sendSmsCaptchaByEmail(emailNum);
+        if (!isSuccess) {
+            return ResultUtils.error(ErrorCode.OPERATION_ERROR, "获取邮箱验证码失败");
+        }
+        return ResultUtils.success("获取邮箱验证码成功！");
     }
 
     /**

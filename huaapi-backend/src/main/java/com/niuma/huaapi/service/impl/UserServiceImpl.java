@@ -339,18 +339,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Override
     public Boolean sendSmsCaptcha(String phoneNum) {
-        String email = "3311646194@qq.com";
         if (StringUtils.isEmpty(phoneNum)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "手机号不能为空");
         }
         AuthPhoneNumberUtil authPhoneNumberUtil = new AuthPhoneNumberUtil();
-
         // 手机号码格式校验
         boolean checkPhoneNum = authPhoneNumberUtil.isPhoneNum(phoneNum);
         if (!checkPhoneNum) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "手机号格式错误");
         }
-
         //生成随机验证码
         int code = (int) ((Math.random() * 9 + 1) * 10000);
         SmsDTO smsDTO = new SmsDTO(phoneNum, String.valueOf(code));

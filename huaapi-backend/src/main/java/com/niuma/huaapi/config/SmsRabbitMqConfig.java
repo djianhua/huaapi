@@ -20,8 +20,14 @@ import static com.niuma.huaapicommon.constant.RabbitMqConstant.*;
 @Slf4j
 @Configuration
 public class SmsRabbitMqConfig {
-
-
+    /**
+     * 主题交换机
+     * @return
+     */
+    @Bean
+    public Exchange smsExchange() {
+        return new TopicExchange(SMS_EXCHANGE_NAME, true, false);
+    }
     /**
      * 普通队列
      * @return
@@ -43,15 +49,6 @@ public class SmsRabbitMqConfig {
     @Bean
     public Queue smsDeadLetter(){
         return new Queue(SMS_DELAY_QUEUE_NAME, true, false, false);
-    }
-
-    /**
-     * 主题交换机
-     * @return
-     */
-    @Bean
-    public Exchange smsExchange() {
-        return new TopicExchange(SMS_EXCHANGE_NAME, true, false);
     }
 
 

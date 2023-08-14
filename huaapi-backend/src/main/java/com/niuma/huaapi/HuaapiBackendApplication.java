@@ -14,6 +14,7 @@ public class HuaapiBackendApplication {
     public static void main(String[] args) {
         SpringApplication.run(HuaapiBackendApplication.class, args);
 
+
     }
 
 }

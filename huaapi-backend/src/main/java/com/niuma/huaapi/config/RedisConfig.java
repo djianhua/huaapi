@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 @Component
 @Data
 public class RedisConfig {
-
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
         // 创建RedisTemplate对象
@@ -34,6 +33,4 @@ public class RedisConfig {
         // 返回
         return template;
     }
-
-
 }
