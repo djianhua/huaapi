@@ -5,11 +5,13 @@ import com.niuma.huaapi.datasource.DataSourceRegistry;
 import com.niuma.huaapi.datasource.InterfaceInfoDataSource;
 import com.niuma.huaapi.model.dto.interfaceinfo.InterfaceInfoSearchRequest;
 import com.niuma.huaapi.model.enums.InterfaceInfoSearchEnum;
+import com.niuma.huaapi.model.es.InterfaceInfoDoc;
 import com.niuma.huaapicommon.model.entity.InterfaceInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 
 /**
  * @author niuma
@@ -21,7 +23,7 @@ public class InterfaceInfoSearchFacade {
     @Resource
     DataSourceRegistry dataSourceRegistry;
 
-    public Page<InterfaceInfo> searchAll(InterfaceInfoSearchRequest interfaceInfoSearchRequest) {
+    public Page<InterfaceInfo> searchAll(InterfaceInfoSearchRequest interfaceInfoSearchRequest) throws IOException {
         String searchText = interfaceInfoSearchRequest.getSearchText();
         String type = interfaceInfoSearchRequest.getType();
         long current = interfaceInfoSearchRequest.getCurrent();

@@ -94,5 +94,23 @@ public class InterfaceInfoDoc {
         this.updateTime = interfaceInfo.getUpdateTime();
         this.requestParams = interfaceInfo.getRequestParams();
         this.requestHeader = interfaceInfo.getRequestHeader();
+        this.userId = interfaceInfo.getUserId();
+    }
+    public InterfaceInfo reverse(InterfaceInfoDoc interfaceInfoDoc) {
+        InterfaceInfo interfaceInfo = new InterfaceInfo();
+        interfaceInfo.setId(interfaceInfoDoc.getId());
+        interfaceInfo.setName(interfaceInfoDoc.getName());
+        interfaceInfo.setMethodName(interfaceInfoDoc.getMethodName());
+        interfaceInfo.setUrl(interfaceInfoDoc.getUrl());
+        interfaceInfo.setDescription(interfaceInfoDoc.getDescription());
+        interfaceInfo.setStatus(interfaceInfoDoc.getStatus());
+        interfaceInfo.setMethod(interfaceInfoDoc.getMethod());
+        interfaceInfo.setResponseHeader(interfaceInfoDoc.getResponseHeader());
+        interfaceInfo.setCreateTime(interfaceInfoDoc.getCreateTime());
+        interfaceInfo.setUpdateTime(interfaceInfoDoc.getUpdateTime());
+        interfaceInfo.setRequestParams(interfaceInfoDoc.getRequestParams());
+        interfaceInfo.setRequestHeader(interfaceInfoDoc.getRequestHeader());
+        interfaceInfo.setUserId(interfaceInfoDoc.getUserId());
+        return interfaceInfo;
     }
 }

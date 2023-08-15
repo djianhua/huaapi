@@ -12,8 +12,14 @@ import com.niuma.huaapicommon.constant.CommonConstant;
 import com.niuma.huaapicommon.exception.BusinessException;
 import com.niuma.huaapicommon.model.entity.InterfaceInfo;
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.client.ElasticsearchClient;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
 * @author niumazlb
@@ -23,8 +29,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, InterfaceInfo>
     implements InterfaceInfoService {
-
-
 
     @Override
     public void validInterfaceInfo(InterfaceInfo interfaceInfo, boolean add) {

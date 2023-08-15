@@ -2,6 +2,8 @@ package com.niuma.huaapi.datasource;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
+import java.io.IOException;
+
 
 /**
  * @author niuma
@@ -16,5 +18,5 @@ public interface InterfaceInfoDataSource<T> {
      * @param pageSize
      * @return
      */
-    Page<T> doSearch(String searchText, long pageNum, long pageSize);
+    Page<T> doSearch(String searchText, long pageNum, long pageSize) throws IOException;
 }

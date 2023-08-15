@@ -8,6 +8,7 @@ import com.niuma.huaapi.annotation.AuthCheck;
 import com.niuma.huaapi.model.dto.interfaceinfo.*;
 import com.niuma.huaapi.model.entity.InterfaceCharging;
 import com.niuma.huaapi.model.enums.InterfaceInfoStatusEnum;
+import com.niuma.huaapi.model.es.InterfaceInfoDoc;
 import com.niuma.huaapi.model.vo.InterfaceInfoVO;
 import com.niuma.huaapi.service.*;
 import com.niuma.huaapicommon.common.*;
@@ -349,7 +350,7 @@ public class InterfaceInfoController {
     }
 
     @PostMapping("/search")
-    public BaseResponse<Page<InterfaceInfo>> search(@RequestBody InterfaceInfoSearchRequest interfaceInfoSearchRequest) {
+    public BaseResponse<Page<InterfaceInfo>> search(@RequestBody InterfaceInfoSearchRequest interfaceInfoSearchRequest) throws IOException {
         return ResultUtils.success(interfaceInfoSearchFacade.searchAll(interfaceInfoSearchRequest));
     }
 
