@@ -13,6 +13,7 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -50,7 +51,8 @@ public class NativeDataSource implements InterfaceInfoDataSource<InterfaceInfo>{
         } else {
             request.source().query(QueryBuilders.matchQuery("all", searchText))
                     .from(Math.toIntExact((pageNum - 1) * pageSize))
-                    .size(Math.toIntExact(pageSize));
+                    .size(Math.toIntExact(pageSize))
+                    .highlighter(new HighlightBuilder().field("description").requireFieldMatch(false));
         }
         SearchResponse response = restHighLevelClient.search(request, RequestOptions.DEFAULT);
         SearchHits searchHits = response.getHits();
@@ -67,11 +69,11 @@ public class NativeDataSource implements InterfaceInfoDataSource<InterfaceInfo>{
             Map<String, HighlightField> highlightFields = hit.getHighlightFields();
             if (!CollectionUtils.isEmpty(highlightFields)) {
                 // 2）根据字段名，获取高亮结果
-                HighlightField highlightField = highlightFields.get("all");
+                HighlightField highlightField = highlightFields.get("description");
                 // 3）获取高亮结果字符串数组中的第1个元素
-                String hName = highlightField.getFragments()[0].toString();
+                String hDescription = highlightField.getFragments()[0].toString();
                 // 4）把高亮结果放到HotelDoc中
-                interfaceInfoDoc.setName(hName);
+                interfaceInfoDoc.setDescription(hDescription);
             }
             interfaceInfoList.add(interfaceInfoDoc.reverse(interfaceInfoDoc));
         }
